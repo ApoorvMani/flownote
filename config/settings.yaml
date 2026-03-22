@@ -1,0 +1,12 @@
+ollama:
+  base_url: "http://localhost:11434"
+  model: "llama3.2:latest"
+  timeout: 30
+
+notes:
+  path: "./notes"
+
+app:
+  log_level: "INFO"
+  hotkey: "ctrl+shift+s"
+  start_minimized: false
