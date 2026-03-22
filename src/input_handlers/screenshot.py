@@ -1,9 +1,23 @@
 import re
 import pytesseract
 from PIL import Image
+import os
+import sys
 from src.utils.logger import get_logger
 
 logger = get_logger(__name__)
+
+if sys.platform == "win32":
+    # Try to find Tesseract in common install locations if it's not in PATH
+    tesseract_paths = [
+        r"C:\Program Files\Tesseract-OCR\tesseract.exe",
+        r"C:\Program Files (x86)\Tesseract-OCR\tesseract.exe",
+        os.path.expanduser(r"~\AppData\Local\Tesseract-OCR\tesseract.exe")
+    ]
+    for path in tesseract_paths:
+        if os.path.exists(path):
+            pytesseract.pytesseract.tesseract_cmd = path
+            break
 
 
 class ScreenshotHandler:

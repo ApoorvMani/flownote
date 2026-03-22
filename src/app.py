@@ -18,8 +18,15 @@ from src.gui.system_tray import SystemTray
 class FlowNoteApp(QtCore.QObject):
     """Main application orchestrating GUI, capture, and backend"""
     
+    ui_preview_update = QtCore.pyqtSignal(str, str)
+    hotkey_capture_signal = QtCore.pyqtSignal()
+    hotkey_toggle_signal = QtCore.pyqtSignal()
+    
     def __init__(self):
         super().__init__()
+        self.ui_preview_update.connect(self._handle_ui_preview_update)
+        self.hotkey_capture_signal.connect(self._handle_hotkey_capture)
+        self.hotkey_toggle_signal.connect(self._handle_hotkey_toggle)
         self.config = get_config()
         self.logger = get_logger("flownote")
         self.memory = get_memory()
@@ -108,8 +115,7 @@ class FlowNoteApp(QtCore.QObject):
     def _capture_worker(self, mode: InputMode):
         """Background worker for capture and AI processing"""
         try:
-            if self.bubble:
-                self.bubble.update_preview("Processing", "Processing with AI...")
+            self.ui_preview_update.emit("Processing", "Processing with AI...")
             
             success, note = self.router.capture_and_process(mode)
             
@@ -179,9 +185,16 @@ class FlowNoteApp(QtCore.QObject):
         self.toggle_hotkey.start()
         self.logger.info("Toggle hotkey listener started: ctrl+shift+b")
 
+    def _handle_ui_preview_update(self, status: str, text: str):
+        if self.bubble:
+            self.bubble.update_preview(status, text)
+
     def _on_hotkey_triggered(self):
         """Handle global hotkey trigger - capture"""
         self.logger.info("Capture hotkey triggered")
+        self.hotkey_capture_signal.emit()
+
+    def _handle_hotkey_capture(self):
         if self.bubble:
             # Show bubble if hidden
             if not self.bubble.isVisible():
@@ -195,6 +208,9 @@ class FlowNoteApp(QtCore.QObject):
     def _on_toggle_hotkey(self):
         """Handle toggle hotkey - show/hide bubble"""
         self.logger.info("Toggle hotkey triggered")
+        self.hotkey_toggle_signal.emit()
+
+    def _handle_hotkey_toggle(self):
         if self.bubble:
             if self.bubble.isVisible():
                 self.bubble.hide()
@@ -233,14 +249,6 @@ class FlowNoteApp(QtCore.QObject):
         app.aboutToQuit.connect(self.shutdown)
 
         return app.exec()
-
-
-class _CaptureCompleteEvent:
-    """Custom event for capture completion"""
-    def __init__(self, success: bool, note: str):
-        self.success = success
-        self.note = note
-
 
 def main() -> int:
     print("\n" + "=" * 50)
