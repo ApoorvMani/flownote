@@ -54,6 +54,7 @@ class SystemTray(QtWidgets.QSystemTrayIcon):
         
         capture_screenshot_action = QtWidgets.QAction("📷 Capture Screenshot", menu)
         capture_screenshot_action.triggered.connect(self.capture_screenshot.emit)
+        menu.addAction(capture_screenshot_action)
         menu.addSeparator()
         
         show_action = QtWidgets.QAction("Show Window", menu)

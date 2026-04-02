@@ -249,10 +249,6 @@ class BubbleWidget(QtWidgets.QWidget):
         else:
             self.update_preview("Error", note)
             
-    def customEvent(self, event):
-        if event.type() == _CaptureCompleteEvent.EVENT_TYPE:
-            self._on_capture_complete(event.success, event.note)
-
     def _move_to_bottom_right(self):
         screen = QtWidgets.QApplication.primaryScreen()
         if screen:

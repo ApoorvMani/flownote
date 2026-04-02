@@ -54,18 +54,7 @@ class NoteStorage:
 
         if filepath.exists():
             existing_content = self._read_existing_notes(filepath)
-            if "Daily Notes" not in existing_content:
-                full_content = f"# Daily Notes - {timestamp.strftime('%Y-%m-%d')}\n\n---\n\n"
-                full_content += existing_content + "\n\n" + note_content
-            else:
-                daily_header = f"# Daily Notes - {timestamp.strftime('%Y-%m-%d')}\n\n---\n\n"
-                if daily_header in existing_content:
-                    parts = existing_content.split(daily_header)
-                    full_content = parts[0] + daily_header + note_content
-                    if len(parts) > 1:
-                        full_content += "\n\n" + parts[1]
-                else:
-                    full_content = existing_content + "\n\n" + note_content
+            full_content = existing_content.rstrip() + "\n\n" + note_content
         else:
             full_content = self._create_new_daily_file(timestamp, note_content)
 

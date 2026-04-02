@@ -8,5 +8,7 @@ notes:
 
 app:
   log_level: "INFO"
-  hotkey: "ctrl+shift+s"
   start_minimized: false
+
+hotkeys:
+  capture: "ctrl+shift+s"

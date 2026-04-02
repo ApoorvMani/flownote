@@ -130,19 +130,6 @@ class FlowNoteApp(QtCore.QObject):
             if app:
                 app.postEvent(self.bubble, _CaptureCompleteEvent(False, str(e)))
 
-    def _on_capture_complete(self, success: bool, note: str):
-        """Handle capture completion"""
-        if success:
-            if self.bubble:
-                preview = note[:150] + "..." if len(note) > 150 else note
-                self.bubble.update_preview("Saved", preview)
-            self.memory.add_note_to_history(note, source="clipboard")
-            self.logger.info("Note captured and saved")
-        else:
-            if self.bubble:
-                self.bubble.update_preview("Error", note)
-            self.logger.error(f"Capture failed: {note}")
-
     def create_tray(self):
         """Create system tray icon"""
         self.tray = SystemTray()
